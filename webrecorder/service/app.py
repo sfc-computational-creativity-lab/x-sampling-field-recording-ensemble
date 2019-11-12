@@ -28,28 +28,29 @@ def root():
 
 @app.route('/', methods=['POST'])
 def upload():
-    fname = os.path.join("sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
-    with open(f"{fname}", "wb") as f:
+    file_name = os.path.join("sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
+    file_path = os.path.join(os.path.dirname(os.getcwd()), file_name)
+    with open(f"{file_path}", "wb") as f:
         f.write(request.files['data'].read())
     print("posted binary data")
     # play
     if conf["talking"]:
-        player = threading.Thread(target=play_wav_file, args=(fname, ))
+        player = threading.Thread(target=play_wav_file, args=(file_path, ))
         player.start()
     # osc
     if conf["use-osc"]:
-        send_osc(os.path.join(os.path.dirname(os.getcwd()), fname))
-    return jsonify({"data": fname})
+        send_osc(file_path)
+    return jsonify({"data": file_path})
 
 
-def play_wav_file(fname):
+def play_wav_file(file_name):
     """
     Talking mode: play sounds immediately after recording
     """
     try:
-        wf = wave.open(fname, "r")
+        wf = wave.open(file_name, "r")
     except FileNotFoundError:
-        print("[Error 404] No such file or directory: " + fname)
+        print("[Error 404] No such file or directory: " + file_name)
         return 0
 
     p = pyaudio.PyAudio()
@@ -78,6 +79,7 @@ def send_osc(msg):
         return
     msg_obj = osc_message_builder.OscMessageBuilder(address=address)
     msg_obj.add_arg(msg)
+    print(f"sent msg: {msg} to address: {address}")
     client.send(msg_obj.build())
 
 
