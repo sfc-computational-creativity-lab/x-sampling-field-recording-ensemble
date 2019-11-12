@@ -1,10 +1,15 @@
-# AudioSampleRecorder
+# x-sampling-field-recording-ensemble
 
-Audio recording on the Web using Web Audio API for remote real-time environmental sound collection.
+---
 
-![animation screenshot](https://i.gyazo.com/6825cb4c65c8d1c4e7f8f7a3a6a357d4.gif)
+![badge](https://img.shields.io/badge/lab-cclab-red.svg)
+![badge](https://img.shields.io/badge/year-2019s-green.svg)
 
-## packages/dependencies
+Field recording ensemble in real time operation.
+
+## web recorder
+
+### packages/dependencies
 
 - python3 and packages listed in `requirements.txt`
 - nodejs and packages listed in `package.json`
@@ -12,27 +17,30 @@ Audio recording on the Web using Web Audio API for remote real-time environmenta
 - ngrok
 - [recorder-js](https://www.npmjs.com/package/recorder-js)
 
-## setup
+### setup
 
 ```shell
-git clone -r https://github.com/atsukoba/AudioSampleRecorder.git
+git clone --recursive https://github.com/sfc-computational-creativity-lab/x-sampling-field-recording-ensemble.git
+cd x-sampling-field-recording-ensemble/webrecorder
 npm install
 sh ngrok-install.sh
 ```
 
 then put your ngrok auth-token
 
-## run
+### run
 
 if using `pip` and `HomeBrew`, run this prepared script. if NOT, rewrite the script suitably (e.g. `pip` -> `conda`, `brew` -> `apt-get`).
 
 ```shell
+cd x-sampling-field-recording-ensemble/webrecorder
 bash run.sh
 ```
 
 when do not use tmux sessions, build a server, make a tunnel and generate qr code manually.
 
 ```shell
+cd x-sampling-field-recording-ensemble/webrecorder
 gunicorn service.app:app -b :YOUR_PORT_NUMBER
 ```
 
@@ -46,13 +54,13 @@ python -c "import qr; qr.generate(NGROK_DISTRIBUTED_URL)"
 
 share and access generated QR code !
 
-## sounds
+### sounds
 
-`.wav` files are saved in `sounds/`
+`.wav` files will be saved in `/sounds/`
 
 sound file path will be sent as osc message (to address `/`)
 
-## settings
+### settings
 
 edit settings (`config.json`) suitably.
 
@@ -68,7 +76,7 @@ edit settings (`config.json`) suitably.
 }
 ```
 
-## develop
+### develop
 
 front-end dev
 
@@ -82,6 +90,6 @@ check Python flask process
 tmux a -t
 ```
 
-## UI design
+### UI design
 
 <https://www.figma.com/file/nRi4YNe3WGXpCxocEcpN35/x-sampling-recorder?node-id=0%3A1>

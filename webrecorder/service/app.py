@@ -28,7 +28,7 @@ def root():
 
 @app.route('/', methods=['POST'])
 def upload():
-    fname = "sounds/" + datetime.now().strftime('%m%d%H%M%S') + ".wav"
+    fname = os.path.join("sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
     with open(f"{fname}", "wb") as f:
         f.write(request.files['data'].read())
     print("posted binary data")
@@ -38,7 +38,7 @@ def upload():
         player.start()
     # osc
     if conf["use-osc"]:
-        send_osc(os.path.join(os.getcwd(), fname))
+        send_osc(os.path.join(os.path.dirname(os.getcwd()), fname))
     return jsonify({"data": fname})
 
 
