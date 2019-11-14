@@ -28,8 +28,8 @@ const startRecording = () => {
   recorder && recorder.record()
   __log('Recording...')
 }
-let startButton: Element = document.querySelector("#startButton") || document.createElement("div")
-startButton.addEventListener('click', startRecording)
+// let startButton: Element = document.querySelector("#startButton") || document.createElement("div")
+// startButton.addEventListener('click', startRecording)
 
 const stopRecording = () => {
   recorder && recorder.stop()
@@ -38,8 +38,8 @@ const stopRecording = () => {
   createDownloadLink()
   sendLocation()
 }
-let stopButton: Element = document.querySelector("#stopButton") || document.createElement("div")
-stopButton.addEventListener('click', stopRecording)
+// let stopButton: Element = document.querySelector("#stopButton") || document.createElement("div")
+// stopButton.addEventListener('click', stopRecording)
 
 const createDownloadLink = () => {
   __log("Sending Data...")
@@ -66,7 +66,6 @@ const createDownloadLink = () => {
 }
 
 const sendLocation = () => {
-  __log(`Location: ${String(locationData.latitude)} / ${String(locationData.longitude)}`)
   $.ajax(
     {
       type: "POST",
@@ -75,7 +74,7 @@ const sendLocation = () => {
       contentType: "application/json",
       success: msg => {
         if (msg) {
-          __log("Location sent!")
+          __log(`Location sent!: ${String(locationData.latitude)} / ${String(locationData.longitude)}`)
         } else {
           __log(`Failed to Location sending: ${msg}`)
         }

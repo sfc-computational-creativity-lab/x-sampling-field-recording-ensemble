@@ -6,8 +6,8 @@ class Button {
   private centerY: number
   private radius: number
   private isRecording: boolean
-  private rectCircleRatio : number
-  private progress : number // 0 ~ 300 value (about 5s)
+  private rectCircleRatio: number
+  private progress: number // 0 ~ 300 value (about 5s)
 
   constructor(w: number, h: number, size: number) {
     this.w = w
@@ -48,7 +48,7 @@ class Button {
         clear();
         this.rectCircleRatio -= 5;
       }
-      this.progress ++
+      this.progress++
     } else {
       if (this.rectCircleRatio <= this.radius / 2) {
         clear();
@@ -61,7 +61,7 @@ class Button {
     rect(
       this.centerX - this.radius / 2,
       this.centerY - this.radius / 2,
-      this.radius, this.radius, 
+      this.radius, this.radius,
       this.rectCircleRatio
     );
     // text
@@ -69,13 +69,13 @@ class Button {
     textAlign(CENTER, CENTER);
     textSize(16);
     if (this.isRecording) {
-      text('STOP', 
-      this.centerX,
-      this.centerY);
-    }else {
-      text('REC', 
-      this.centerX,
-      this.centerY);
+      text('STOP',
+        this.centerX,
+        this.centerY);
+    } else {
+      text('REC',
+        this.centerX,
+        this.centerY);
     }
   }
 }

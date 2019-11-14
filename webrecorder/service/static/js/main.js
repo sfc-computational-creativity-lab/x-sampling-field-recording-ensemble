@@ -79,16 +79,12 @@ const startRecording = () => {
     recorder && recorder.record();
     __log('Recording...');
 };
-let startButton = document.querySelector("#startButton") || document.createElement("div");
-startButton.addEventListener('click', startRecording);
 const stopRecording = () => {
     recorder && recorder.stop();
     __log('Stopped recording.');
     createDownloadLink();
     sendLocation();
 };
-let stopButton = document.querySelector("#stopButton") || document.createElement("div");
-stopButton.addEventListener('click', stopRecording);
 const createDownloadLink = () => {
     __log("Sending Data...");
     recorder && recorder.exportWAV((blob) => {
@@ -112,7 +108,6 @@ const createDownloadLink = () => {
     });
 };
 const sendLocation = () => {
-    __log(`Location: ${String(locationData.latitude)} / ${String(locationData.longitude)}`);
     $.ajax({
         type: "POST",
         url: "/location",
@@ -120,7 +115,7 @@ const sendLocation = () => {
         contentType: "application/json",
         success: msg => {
             if (msg) {
-                __log("Location sent!");
+                __log(`Location sent!: ${String(locationData.latitude)} / ${String(locationData.longitude)}`);
             }
             else {
                 __log(`Failed to Location sending: ${msg}`);
@@ -281,9 +276,15 @@ function drawCircleUI(progress) {
 function draw() {
     button.draw();
 }
+let buttonUnLock = true;
 function mousePressed() {
-    if (button.isTouched(mouseX, mouseY)) {
+    if (button.isTouched(mouseX, mouseY) && (buttonUnLock)) {
         button.switchRecording();
+        buttonUnLock = false;
+        setTimeout(() => {
+            buttonUnLock = true;
+            console.log("Button Unlocked");
+        }, 100);
     }
 }
 //# sourceMappingURL=main.js.map

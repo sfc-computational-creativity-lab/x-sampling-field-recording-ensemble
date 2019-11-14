@@ -1,14 +1,14 @@
-const mainColor : string = "#FF5555"
-const white : string = "#F5FFF2"
-const bodyPadding : number = 15
-const circleWidth : number = 180
-const circleWeight : number = 20
-const buttonWidth : number = 80
-let button : Button
-let circleLeftY : number
-let circleLeftX : number
-let circleRightX : number
-let circleRightY : number
+const mainColor: string = "#FF5555"
+const white: string = "#F5FFF2"
+const bodyPadding: number = 15
+const circleWidth: number = 180
+const circleWeight: number = 20
+const buttonWidth: number = 80
+let button: Button
+let circleLeftY: number
+let circleLeftX: number
+let circleRightX: number
+let circleRightY: number
 
 function setup() {
   const canvas = createCanvas(
@@ -26,10 +26,10 @@ function setup() {
 }
 
 function windowResized() {
-  resizeCanvas(window.screen.availWidth - (bodyPadding * 2), window.screen.availHeight/2);
+  resizeCanvas(window.screen.availWidth - (bodyPadding * 2), window.screen.availHeight / 2);
 }
 
-function drawCircleUI(progress : number) {
+function drawCircleUI(progress: number) {
   strokeWeight(circleWeight)
   stroke(white)
   noFill()
@@ -41,15 +41,22 @@ function drawCircleUI(progress : number) {
   arc(
     width / 2, height / 2,
     circleWidth - (circleWeight / 2), circleWidth - (circleWeight / 2),
-    -PI/2, (progress)-PI/2+.0001);
+    -PI / 2, (progress) - PI / 2 + .0001);
 }
 
 function draw() {
   button.draw()
 }
 
+let buttonUnLock: boolean = true
 function mousePressed() {
-  if (button.isTouched(mouseX, mouseY)) {
+  if (button.isTouched(mouseX, mouseY) && (buttonUnLock)) {
     button.switchRecording()
-  } 
+    // prevent mashing
+    buttonUnLock = false
+    setTimeout(() => {
+      buttonUnLock = true
+      console.log("Button Unlocked")
+    }, 100);
+  }
 }

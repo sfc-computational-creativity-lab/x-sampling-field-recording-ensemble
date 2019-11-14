@@ -54,6 +54,12 @@ python -c "import qr; qr.generate(NGROK_DISTRIBUTED_URL)"
 
 share and access generated QR code !
 
+when stopping daemon gunicorn process, for example exec below (8888 is hearing port num)
+
+```shell
+kill `ps ax | grep gunicorn | grep 8888 | awk '{split($0,a," "); print a[1]}' | head -n 1`
+```
+
 ### sounds
 
 `.wav` files will be saved in `/sounds/`
