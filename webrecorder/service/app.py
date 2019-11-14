@@ -49,7 +49,7 @@ def location_update():
         print(f"location received: {data}")
         # osc
         if conf["use-osc"]:
-            send_osc(f"{data['latitude']} {data['longitude']}", route="/location")
+            send_osc(f"{data['latitude']}/{data['longitude']}", route="/location")
         return jsonify({"data": f"received: {data['latitude']} {data['longitude']}"})
 
 
