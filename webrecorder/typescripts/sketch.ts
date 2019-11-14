@@ -48,12 +48,6 @@ function draw() {
   button.draw()
 }
 
-function mouseClicked() {
-  if (button.isTouched(mouseX, mouseY)) {
-    button.switchRecording()
-  }
-}
-
 function mousePressed() {
   if (button.isTouched(mouseX, mouseY)) {
     button.switchRecording()

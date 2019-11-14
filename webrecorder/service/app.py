@@ -9,7 +9,6 @@ from flask import Flask, abort, jsonify, render_template, request
 
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
 
-
 app = Flask(__name__)
 
 with open("config.json", "r") as f:
@@ -43,6 +42,17 @@ def upload():
     return jsonify({"data": file_path})
 
 
+@app.route('/location', methods=['POST'])
+def location_update():
+    data = request.json
+    if data is not None:
+        print(f"location received: {data}")
+        # osc
+        if conf["use-osc"]:
+            send_osc(f"{data['latitude']} {data['longitude']}", route="/location")
+        return jsonify({"data": f"received: {data['latitude']} {data['longitude']}"})
+
+
 def play_wav_file(file_name):
     """
     Talking mode: play sounds immediately after recording
@@ -71,15 +81,15 @@ def play_wav_file(file_name):
     p.terminate()
 
 
-def send_osc(msg):
+def send_osc(msg, route="/sound"):
     """
     send saved .wav file path as osc message
     """
     if not conf["use-osc"]:
         return
-    msg_obj = osc_message_builder.OscMessageBuilder(address=address)
+    msg_obj = osc_message_builder.OscMessageBuilder(address=route)
     msg_obj.add_arg(msg)
-    print(f"sent msg: {msg} to address: {address}")
+    print(f"sent msg: {msg} to address: {route}")
     client.send(msg_obj.build())
 
 

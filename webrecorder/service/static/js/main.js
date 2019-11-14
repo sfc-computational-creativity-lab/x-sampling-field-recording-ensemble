@@ -85,6 +85,7 @@ const stopRecording = () => {
     recorder && recorder.stop();
     __log('Stopped recording.');
     createDownloadLink();
+    sendLocation();
 };
 let stopButton = document.querySelector("#stopButton") || document.createElement("div");
 stopButton.addEventListener('click', stopRecording);
@@ -110,6 +111,31 @@ const createDownloadLink = () => {
         });
     });
 };
+const sendLocation = () => {
+    __log(`Location: ${String(locationData.latitude)} / ${String(locationData.longitude)}`);
+    $.ajax({
+        type: "POST",
+        url: "/location",
+        dataType: "json",
+        contentType: "application/json",
+        success: msg => {
+            if (msg) {
+                __log("Location sent!");
+            }
+            else {
+                __log(`Failed to Location sending: ${msg}`);
+            }
+        },
+        data: JSON.stringify({
+            "latitude": locationData.latitude,
+            "longitude": locationData.longitude
+        })
+    });
+};
+var locationData = {
+    latitude: 0,
+    longitude: 0
+};
 window.onload = function init() {
     try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -122,6 +148,10 @@ window.onload = function init() {
     }
     navigator.getUserMedia({ audio: true }, startUserMedia, (e) => {
         __log('No live audio input: ' + e);
+    });
+    navigator.geolocation.getCurrentPosition(position => {
+        locationData.latitude = position.coords.latitude;
+        locationData.longitude = position.coords.longitude;
     });
 };
 class Morph {
@@ -250,11 +280,6 @@ function drawCircleUI(progress) {
 }
 function draw() {
     button.draw();
-}
-function mouseClicked() {
-    if (button.isTouched(mouseX, mouseY)) {
-        button.switchRecording();
-    }
 }
 function mousePressed() {
     if (button.isTouched(mouseX, mouseY)) {
