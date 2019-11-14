@@ -13,16 +13,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atsukoba/AudioSampleCollector.git"
+    "url": "git+https://github.com/sfc-computational-creativity-lab/x-sampling-field-recording-ensemble.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/atsukoba/AudioSampleCollector/issues"
+    "url": "https://github.com/sfc-computational-creativity-lab/x-sampling-field-recording-ensemble/issues"
   },
-  "homepage": "https://github.com/atsukoba/AudioSampleCollector#readme",
+  "homepage": "https://github.com/sfc-computational-creativity-lab/x-sampling-field-recording-ensemble/#readme",
   "dependencies": {
-    "@types/jquery": "^3.3.31"
+    "@types/jquery": "^3.3.31",
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@types/p5": "^0.9.0",
