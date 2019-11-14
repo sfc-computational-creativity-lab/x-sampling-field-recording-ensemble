@@ -53,3 +53,9 @@ function mouseClicked() {
     button.switchRecording()
   }
 }
+
+function mousePressed() {
+  if (button.isTouched(mouseX, mouseY)) {
+    button.switchRecording()
+  } 
+}
