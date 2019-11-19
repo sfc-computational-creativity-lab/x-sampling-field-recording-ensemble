@@ -1,4 +1,6 @@
 import os
+
+import librosa
 from easydict import EasyDict
 
 conf = EasyDict()
@@ -44,3 +46,7 @@ conf.rt_oversamples = 10
 conf.pred_ensembles = 10
 conf.runtime_model_file = os.path.join(os.path.dirname(
     os.getcwd()), 'model', 'mobilenetv2_fsd2018_41cls.pb')
+
+# freq lists for fft
+conf.freq_list = librosa.fft_frequencies(
+    sr=conf.sampling_rate, n_fft=conf.n_fft)

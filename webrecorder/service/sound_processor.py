@@ -86,8 +86,8 @@ def auto_complete_conf(conf):
 auto_complete_conf(conf)
 print(conf)
 
-# # Data utilities
 
+# # Data utilities
 
 def load_labels(conf):
     conf.labels = load_npy(conf, 'labels.npy')
@@ -155,13 +155,10 @@ def read_as_melspectrogram(conf, pathname, trim_long_data, debug_display=False):
     return mels
 
 
-def detect_pitch(conf, wave, sr, t):
-    pitches, magnitudes = librosa.core.piptrack(
-        y=wave, sr=sr, fmin=conf.fmin, fmax=conf.fmax)
-    np.set_printoptions(threshold=np.nan)
-    index = magnitudes[:, t].argmax()
-    pitch = pitches[index, t]
-    return pitch
+def detect_pitch(conf, wave):
+    y_stft = np.abs(librosa.stft(wave, n_fft=conf.n_fft))
+    playfreq = conf.freq_list[np.argmax(np.median(y_stft, axis=1))]
+    return playfreq
 
 
 # Dataset Utilities

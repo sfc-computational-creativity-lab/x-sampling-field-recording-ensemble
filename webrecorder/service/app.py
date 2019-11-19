@@ -10,7 +10,7 @@ from flask import Flask, abort, jsonify, render_template, request
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
 
 import service.classifier_config as cconfig
-from service.sound_processor import KerasTFGraph, load_sample_as_X
+from service import sound_processor
 
 app = Flask(__name__)
 
@@ -22,11 +22,11 @@ if conf["use-osc"]:
     client = udp_client.UDPClient(address, conf["osc-port"])
 
 # lord and setup trained keras classification model as module variable
-model = KerasTFGraph(os.path.join(os.path.dirname(os.getcwd()),
-                                  "ml-sound-classifier", "model", "mobilenetv2_fsd2018_41cls.pb"),
-                     input_name='import/input_1',
-                     keras_learning_phase_name='import/bn_Conv1/keras_learning_phase',
-                     output_name='import/output0')
+model = sound_processor.KerasTFGraph(os.path.join(os.path.dirname(os.getcwd()),
+                                                  "ml-sound-classifier", "model", "mobilenetv2_fsd2018_41cls.pb"),
+                                     input_name='import/input_1',
+                                     keras_learning_phase_name='import/bn_Conv1/keras_learning_phase',
+                                     output_name='import/output0')
 
 
 @app.route('/', methods=['GET'])
@@ -49,14 +49,15 @@ def upload():
         player.start()
 
     # classification
-    label = classify(file_path)
+    label, pitch = analyze_wav_file(file_path)
 
     # osc
     if conf["use-osc"]:
         send_osc(file_path)
         send_osc(label, "/label")
+        send_osc(pitch, "/pitch")
 
-    return jsonify({"data": file_path, "class": label})
+    return jsonify({"data": file_path, "class": label, "pitch": pitch})
 
 
 @app.route('/location', methods=['POST'])
@@ -111,17 +112,21 @@ def send_osc(msg, route="/sound"):
     client.send(msg_obj.build())
 
 
-def classify(file_path):
+def analyze_wav_file(file_path):
     """
-    Classify sounds: based on labels used in DCASE2018 Challenge: 
+    Detect pitch and classify sounds: based on labels used in DCASE2018 Challenge: 
     IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
     """
-    preds = model.predict(load_sample_as_X(
-        cconfig.conf, file_path, trim_long_data=False))
+    wave = sound_processor.read_audio(
+        cconfig.conf, file_path, trim_long_data=True)
+    pitch = sound_processor.detect_pitch(cconfig.conf, wave)
+    preds = model.predict(sound_processor.audio_sample_to_X(
+        cconfig.conf, wave))
     for pred in preds:
         result = np.argmax(pred)
     print(f"Result: {cconfig.conf.labels[result]}, {pred[result]}")
-    return cconfig.conf.labels[result]
+    print(f"Pitch: {pitch}")
+    return (cconfig.conf.labels[result], pitch)
 
 
 if __name__ == "__main__":
