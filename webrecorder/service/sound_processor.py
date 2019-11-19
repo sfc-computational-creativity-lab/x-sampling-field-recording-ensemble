@@ -1,27 +1,22 @@
-
-# Common functions and definitions
-#
-# This file defines commonly used parts for ease of programming.
-# Import as follows:
-#
-# > from classifier import *
-#
-# Private notation(s):
-# - mels = melspectrogram
-#
-
-# # Basic definitions
-from service.classifier_config import *
-import tensorflow as tf
-import librosa.display
-import librosa
-import matplotlib.pyplot as plt
-import pandas as pd
-from pathlib import Path
 import shutil
 import sys
-import numpy as np
 import warnings
+from pathlib import Path
+
+import IPython
+import librosa
+import librosa.display
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import pyaudio
+import tensorflow as tf
+from sklearn.model_selection import StratifiedKFold
+
+from service.classifier_config import *
+from service.sound_models import create_model, freeze_model_layers
+
 warnings.simplefilter('ignore')
 np.warnings.filterwarnings('ignore')
 np.random.seed(1001)
@@ -108,13 +103,7 @@ def load_npy(conf, filename):
     return np.load(conf.folder / filename)
 
 
-# # Model
-if conf.use_audio_training_model:
-    from service.sound_models import create_model, freeze_model_layers
-
-# # Audio Utilities
-
-
+# Audio Utilities
 def read_audio(conf, pathname, trim_long_data):
     y, sr = librosa.load(pathname, sr=conf.sampling_rate)
     # trim silence
@@ -128,6 +117,7 @@ def read_audio(conf, pathname, trim_long_data):
         padding = conf.samples - len(y)    # add padding at both ends
         offset = padding // 2
         y = np.pad(y, (offset, conf.samples - len(y) - offset), 'constant')
+
     return y
 
 
@@ -140,14 +130,11 @@ def audio_to_melspectrogram(conf, audio):
                                                  fmin=conf.fmin,
                                                  fmax=conf.fmax)
     spectrogram = librosa.power_to_db(spectrogram)
-    spectrogram = spectrogram.astype(np.float32)
+    spectrogram = spectrogram.astype("float32")
     return spectrogram
 
 
 def show_melspectrogram(conf, mels, title='Log-frequency power spectrogram'):
-    import IPython
-    import matplotlib
-    from sklearn.model_selection import StratifiedKFold
     matplotlib.style.use('ggplot')
 
     librosa.display.specshow(mels, x_axis='time', y_axis='mel',
@@ -167,8 +154,17 @@ def read_as_melspectrogram(conf, pathname, trim_long_data, debug_display=False):
         show_melspectrogram(conf, mels)
     return mels
 
-# # Dataset Utilities
 
+def detect_pitch(conf, wave, sr, t):
+    pitches, magnitudes = librosa.core.piptrack(
+        y=wave, sr=sr, fmin=conf.fmin, fmax=conf.fmax)
+    np.set_printoptions(threshold=np.nan)
+    index = magnitudes[:, t].argmax()
+    pitch = pitches[index, t]
+    return pitch
+
+
+# Dataset Utilities
 
 def deprecated_samplewise_mean_audio_X(X):
     for i in range(len(X)):
@@ -233,8 +229,7 @@ def geometric_mean_preds(_preds):
     return np.power(preds[0], 1/preds.shape[0])
 
 
-# # Tensorflow Utilities
-
+# Tensorflow Utilities
 
 def load_graph(model_file):
     graph = tf.Graph()
@@ -283,11 +278,6 @@ def load_keras_tf_graph(conf, graph_file):
         output_name=model_node[conf.model][2])
 
 
-# # Pyaudio Utilities
-if is_handling_audio(conf):
-    import pyaudio
-
-
 def print_pyaudio_devices():
     p = pyaudio.PyAudio()
     count = p.get_device_count()
@@ -295,8 +285,8 @@ def print_pyaudio_devices():
         dev = p.get_device_info_by_index(i)
         print(i, dev['name'], dev)
 
-# # Test Utilities
 
+# Test Utilities
 
 def recursive_test(a, b, fn):
     """Greedy test every single corresponding contents between a & b recursively."""
