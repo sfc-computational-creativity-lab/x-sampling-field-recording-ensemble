@@ -99,3 +99,8 @@ tmux a -t
 ### UI design
 
 <https://www.figma.com/file/nRi4YNe3WGXpCxocEcpN35/x-sampling-recorder?node-id=0%3A1>
+
+## Sound Classification
+
+implements based on <https://github.com/daisukelab/ml-sound-classifier>
+
