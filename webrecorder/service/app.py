@@ -27,7 +27,8 @@ def root():
 
 @app.route('/', methods=['POST'])
 def upload():
-    file_name = os.path.join("sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
+    file_name = os.path.join(
+        "sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
     file_path = os.path.join(os.path.dirname(os.getcwd()), file_name)
     with open(f"{file_path}", "wb") as f:
         f.write(request.files['data'].read())
@@ -49,7 +50,8 @@ def location_update():
         print(f"location received: {data}")
         # osc
         if conf["use-osc"]:
-            send_osc(f"{data['latitude']}/{data['longitude']}", route="/location")
+            send_osc(f"{data['latitude']}/{data['longitude']}",
+                     route="/location")
         return jsonify({"data": f"received: {data['latitude']} {data['longitude']}"})
 
 
