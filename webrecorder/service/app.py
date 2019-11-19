@@ -4,10 +4,13 @@ import threading
 import wave
 from datetime import datetime
 
+import numpy as np
 import pyaudio
 from flask import Flask, abort, jsonify, render_template, request
-
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
+
+import service.classifier_config as cconfig
+from service.classifier import KerasTFGraph, load_sample_as_X
 
 app = Flask(__name__)
 
@@ -17,6 +20,13 @@ with open("config.json", "r") as f:
 if conf["use-osc"]:
     address = "127.0.0.1"
     client = udp_client.UDPClient(address, conf["osc-port"])
+
+# lord trained model and setup keras classification model
+model = KerasTFGraph(os.path.join(os.path.dirname(os.getcwd()),
+                                  "ml-sound-classifier", "model", "mobilenetv2_fsd2018_41cls.pb"),
+                     input_name='import/input_1',
+                     keras_learning_phase_name='import/bn_Conv1/keras_learning_phase',
+                     output_name='import/output0')
 
 
 @app.route('/', methods=['GET'])
@@ -32,15 +42,21 @@ def upload():
     file_path = os.path.join(os.path.dirname(os.getcwd()), file_name)
     with open(f"{file_path}", "wb") as f:
         f.write(request.files['data'].read())
-    print("posted binary data")
+    print("Posted binary data: {file_path}")
     # play
     if conf["talking"]:
         player = threading.Thread(target=play_wav_file, args=(file_path, ))
         player.start()
+
+    # classification
+    label = classify(file_path)
+
     # osc
     if conf["use-osc"]:
         send_osc(file_path)
-    return jsonify({"data": file_path})
+        send_osc(label, "/label")
+
+    return jsonify({"data": file_path, "class": label})
 
 
 @app.route('/location', methods=['POST'])
@@ -85,7 +101,7 @@ def play_wav_file(file_name):
 
 def send_osc(msg, route="/sound"):
     """
-    send saved .wav file path as osc message
+    Send saved .wav file path as osc message
     """
     if not conf["use-osc"]:
         return
@@ -93,6 +109,19 @@ def send_osc(msg, route="/sound"):
     msg_obj.add_arg(msg)
     print(f"sent msg: {msg} to address: {route}")
     client.send(msg_obj.build())
+
+
+def classify(file_path):
+    """
+    Classify sounds: based on labels used in DCASE2018 Challenge: 
+    IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
+    """
+    preds = model.predict(load_sample_as_X(
+        cconfig.conf, file_path, trim_long_data=False))
+    for pred in preds:
+        result = np.argmax(pred)
+    print(f"Result: {cconfig.conf.labels[result]}, {pred[result]}")
+    return cconfig.conf.labels[result]
 
 
 if __name__ == "__main__":
