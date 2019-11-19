@@ -112,6 +112,12 @@ tmux a -t
 
 ## Sound Classification
 
-use machine learning classification model of DCASE2018 Challenge: IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
+use machine learning classification model of *DCASE2018 Challenge: IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events*
 
-use public trained model and implemented based on <https://github.com/daisukelab/ml-sound-classifier> (imported as submodule in this repo)
+sound classes are
+
+```shell
+'Hi-hat','Saxophone','Trumpet','Glockenspiel','Cello','Knock','Gunshot_or_gunfire','Clarinet','Computer_keyboard','Keys_jangling','Snare_drum','Writing','Laughter','Tearing','Fart','Oboe','Flute','Cough','Telephone','Bark','Chime','Bass_drum','Bus','Squeak','Scissors','Harmonica','Gong','Microwave_oven','Burping_or_eructation','Double_bass','Shatter','Fireworks','Tambourine','Cowbell','Electric_piano','Meow','Drawer_open_or_close','Applause','Acoustic_guitar','Violin_or_fiddle','Finger_snapping'
+```
+
+using public trained model and implemented based on <https://github.com/daisukelab/ml-sound-classifier> (imported as submodule in this repo)
