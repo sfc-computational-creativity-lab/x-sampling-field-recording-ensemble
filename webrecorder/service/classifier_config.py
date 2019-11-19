@@ -1,6 +1,3 @@
-# Freesound Dataset Kaggle 2018
-# Application configurations
-
 import os
 from easydict import EasyDict
 

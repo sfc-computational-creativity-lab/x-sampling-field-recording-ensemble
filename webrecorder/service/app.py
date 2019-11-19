@@ -10,7 +10,7 @@ from flask import Flask, abort, jsonify, render_template, request
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
 
 import service.classifier_config as cconfig
-from service.classifier import KerasTFGraph, load_sample_as_X
+from service.sound_processor import KerasTFGraph, load_sample_as_X
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ if conf["use-osc"]:
     address = "127.0.0.1"
     client = udp_client.UDPClient(address, conf["osc-port"])
 
-# lord trained model and setup keras classification model
+# lord and setup trained keras classification model as module variable
 model = KerasTFGraph(os.path.join(os.path.dirname(os.getcwd()),
                                   "ml-sound-classifier", "model", "mobilenetv2_fsd2018_41cls.pb"),
                      input_name='import/input_1',
