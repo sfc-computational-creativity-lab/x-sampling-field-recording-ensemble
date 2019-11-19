@@ -64,6 +64,16 @@ kill `ps ax | grep gunicorn | grep 8888 | awk '{split($0,a," "); print a[1]}' | 
 
 `.wav` files will be saved in `/sounds/`
 
+```shell
+── sounds
+   ├── 1115003250.wav
+   ├── 1115003252.wav
+   ├── 1115003300.wav
+   ├── 1115003301.wav
+   ├── 1115003306.wav
+   ├── 1115003307.wav
+```
+
 sound file path will be sent as osc message (to address `/`)
 
 ### settings
@@ -102,5 +112,6 @@ tmux a -t
 
 ## Sound Classification
 
-implements based on <https://github.com/daisukelab/ml-sound-classifier>
+use machine learning classification model of DCASE2018 Challenge: IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
 
+use public trained model and implemented based on <https://github.com/daisukelab/ml-sound-classifier> (imported as submodule in this repo)
