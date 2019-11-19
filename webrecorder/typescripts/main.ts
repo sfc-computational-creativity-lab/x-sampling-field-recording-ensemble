@@ -58,8 +58,9 @@ const createDownloadLink = () => {
       processData: false,
       contentType: false
     }).done((data) => {
-      __log(`File saved : ${data.data}`)
+      __log(`File saved: ${data.data}`)
       __log(`Sound classified: ${data.class}`)
+      __log(`Pitch detected: ${data.pitch}Hz`)
       recorder.clear()
     }
     )
