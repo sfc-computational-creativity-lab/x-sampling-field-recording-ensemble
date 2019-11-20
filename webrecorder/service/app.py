@@ -49,12 +49,12 @@ def upload():
         player.start()
 
     # classification
-    label, pitch = analyze_wav_file(file_path)
+    label, label_class, pitch = analyze_wav_file(file_path)
 
     # osc
     if conf["use-osc"]:
         send_osc(file_path)
-        send_osc(label, "/label")
+        send_osc(label_class, "/label")
         send_osc(pitch, "/pitch")
 
     return jsonify({"data": file_path, "class": label, "pitch": pitch})
@@ -124,9 +124,12 @@ def analyze_wav_file(file_path):
         cconfig.conf, wave))
     for pred in preds:
         result = np.argmax(pred)
-    print(f"Result: {cconfig.conf.labels[result]}, {pred[result]}")
+
+    label = cconfig.conf.labels[result]
+    label_class = cconfig.conf.label_classes[label]
+    print(f"Result: {label} / Class: '{label_class}' / Proba: {pred[result]}")
     print(f"Pitch: {pitch}")
-    return (cconfig.conf.labels[result], pitch)
+    return (cconfig.conf.labels[result], label_class, pitch)
 
 
 if __name__ == "__main__":

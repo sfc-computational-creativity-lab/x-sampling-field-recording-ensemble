@@ -26,6 +26,50 @@ conf.labels = ['Hi-hat', 'Saxophone', 'Trumpet', 'Glockenspiel', 'Cello', 'Knock
                'Drawer_open_or_close', 'Applause', 'Acoustic_guitar',
                'Violin_or_fiddle', 'Finger_snapping']
 
+conf.label_classes = {
+    "Hihat": "HH",
+    "Saxophone": "Wind",
+    "Trumpet": "Wind",
+    "Glockenspiel": "TT",
+    "Cello": "Bass",
+    "Knock": "Snare",
+    "Gunshot_or_gunfire": "BD",
+    "Clarinet": "Wind",
+    "Computer_keyboard": "HH",
+    "Keys_jangling": "HH",
+    "Snare_drum": "Snare",
+    "Writing": "HH",
+    "Laughter": "Chorus",
+    "Tearing": "Snare",
+    "Fart": "BD",
+    "Oboe": "Wind",
+    "Flute": "Wind",
+    "Cough": "Snare",
+    "Telephone": "Piano",
+    "Bark": "Bass",
+    "Chime": "TT",
+    "Bass_drum": "BD",
+    "Bus": "Bass",
+    "Squeak": "Chorus",
+    "Scissors": "HH",
+    "Harmonica": "Piano",
+    "Gong": "TT",
+    "Microwave_oven": "Bass",
+    "Burping_or_eructation": "Bass",
+    "Double_bass": "Bass",
+    "Shatter": "Snare",
+    "Fireworks": "Snare",
+    "Tambourine": "Snare",
+    "Cowbell": "TT",
+    "Electric_piano": "Piano",
+    "Meow": "Chorus",
+    "Drawer_open_or_close": "BD",
+    "Applause": "Chorus",
+    "Acoustic_guitar": "Piano",
+    "Violin_or_fiddle": "Piano",
+    "Finger_snapping": "HH"
+}
+
 # Training configurations
 conf.folder = '.'
 conf.n_fold = 1
