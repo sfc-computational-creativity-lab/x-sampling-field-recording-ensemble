@@ -64,6 +64,16 @@ kill `ps ax | grep gunicorn | grep 8888 | awk '{split($0,a," "); print a[1]}' | 
 
 `.wav` files will be saved in `/sounds/`
 
+```shell
+── sounds
+   ├── 1115003250.wav
+   ├── 1115003252.wav
+   ├── 1115003300.wav
+   ├── 1115003301.wav
+   ├── 1115003306.wav
+   ├── 1115003307.wav
+```
+
 sound file path will be sent as osc message (to address `/`)
 
 ### settings
@@ -99,3 +109,15 @@ tmux a -t
 ### UI design
 
 <https://www.figma.com/file/nRi4YNe3WGXpCxocEcpN35/x-sampling-recorder?node-id=0%3A1>
+
+## Sound Classification
+
+use machine learning classification model of *DCASE2018 Challenge: IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events*
+
+sound classes are
+
+```shell
+'Hi-hat','Saxophone','Trumpet','Glockenspiel','Cello','Knock','Gunshot_or_gunfire','Clarinet','Computer_keyboard','Keys_jangling','Snare_drum','Writing','Laughter','Tearing','Fart','Oboe','Flute','Cough','Telephone','Bark','Chime','Bass_drum','Bus','Squeak','Scissors','Harmonica','Gong','Microwave_oven','Burping_or_eructation','Double_bass','Shatter','Fireworks','Tambourine','Cowbell','Electric_piano','Meow','Drawer_open_or_close','Applause','Acoustic_guitar','Violin_or_fiddle','Finger_snapping'
+```
+
+using public trained model and implemented based on <https://github.com/daisukelab/ml-sound-classifier> (imported as submodule in this repo)

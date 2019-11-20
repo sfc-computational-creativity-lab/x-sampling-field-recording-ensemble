@@ -1,3 +1,6 @@
 [submodule "Recorderjs"]
 	path = webrecorder/Recorderjs
 	url = https://github.com/mattdiamond/Recorderjs.git
+[submodule "ml-sound-classifier"]
+	path = ml-sound-classifier
+	url = git@github.com:atsukoba/ml-sound-classifier.git

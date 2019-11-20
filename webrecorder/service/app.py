@@ -4,10 +4,13 @@ import threading
 import wave
 from datetime import datetime
 
+import numpy as np
 import pyaudio
 from flask import Flask, abort, jsonify, render_template, request
-
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
+
+import service.classifier_config as cconfig
+from service import sound_processor
 
 app = Flask(__name__)
 
@@ -18,6 +21,13 @@ if conf["use-osc"]:
     address = "127.0.0.1"
     client = udp_client.UDPClient(address, conf["osc-port"])
 
+# lord and setup trained keras classification model as module variable
+model = sound_processor.KerasTFGraph(os.path.join(os.path.dirname(os.getcwd()),
+                                                  "ml-sound-classifier", "model", "mobilenetv2_fsd2018_41cls.pb"),
+                                     input_name='import/input_1',
+                                     keras_learning_phase_name='import/bn_Conv1/keras_learning_phase',
+                                     output_name='import/output0')
+
 
 @app.route('/', methods=['GET'])
 def root():
@@ -27,19 +37,27 @@ def root():
 
 @app.route('/', methods=['POST'])
 def upload():
-    file_name = os.path.join("sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
+    file_name = os.path.join(
+        "sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
     file_path = os.path.join(os.path.dirname(os.getcwd()), file_name)
     with open(f"{file_path}", "wb") as f:
         f.write(request.files['data'].read())
-    print("posted binary data")
+    print("Posted binary data: {file_path}")
     # play
     if conf["talking"]:
         player = threading.Thread(target=play_wav_file, args=(file_path, ))
         player.start()
+
+    # classification
+    label, pitch = analyze_wav_file(file_path)
+
     # osc
     if conf["use-osc"]:
         send_osc(file_path)
-    return jsonify({"data": file_path})
+        send_osc(label, "/label")
+        send_osc(pitch, "/pitch")
+
+    return jsonify({"data": file_path, "class": label, "pitch": pitch})
 
 
 @app.route('/location', methods=['POST'])
@@ -49,7 +67,8 @@ def location_update():
         print(f"location received: {data}")
         # osc
         if conf["use-osc"]:
-            send_osc(f"{data['latitude']}/{data['longitude']}", route="/location")
+            send_osc(f"{data['latitude']}/{data['longitude']}",
+                     route="/location")
         return jsonify({"data": f"received: {data['latitude']} {data['longitude']}"})
 
 
@@ -83,7 +102,7 @@ def play_wav_file(file_name):
 
 def send_osc(msg, route="/sound"):
     """
-    send saved .wav file path as osc message
+    Send saved .wav file path as osc message
     """
     if not conf["use-osc"]:
         return
@@ -91,6 +110,23 @@ def send_osc(msg, route="/sound"):
     msg_obj.add_arg(msg)
     print(f"sent msg: {msg} to address: {route}")
     client.send(msg_obj.build())
+
+
+def analyze_wav_file(file_path):
+    """
+    Detect pitch and classify sounds: based on labels used in DCASE2018 Challenge: 
+    IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
+    """
+    wave = sound_processor.read_audio(
+        cconfig.conf, file_path, trim_long_data=True)
+    pitch = sound_processor.detect_pitch(cconfig.conf, wave)
+    preds = model.predict(sound_processor.audio_sample_to_X(
+        cconfig.conf, wave))
+    for pred in preds:
+        result = np.argmax(pred)
+    print(f"Result: {cconfig.conf.labels[result]}, {pred[result]}")
+    print(f"Pitch: {pitch}")
+    return (cconfig.conf.labels[result], pitch)
 
 
 if __name__ == "__main__":
