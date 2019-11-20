@@ -40,24 +40,26 @@ def upload():
     file_name = os.path.join(
         "sounds", datetime.now().strftime('%m%d%H%M%S') + ".wav")
     file_path = os.path.join(os.path.dirname(os.getcwd()), file_name)
+
     with open(f"{file_path}", "wb") as f:
         f.write(request.files['data'].read())
     print("Posted binary data: {file_path}")
+
+    # classification
+    label, label_class, pitch, trimed_file_path = analyze_wav_file(file_path)
+
     # play
     if conf["talking"]:
         player = threading.Thread(target=play_wav_file, args=(file_path, ))
         player.start()
 
-    # classification
-    label, label_class, pitch = analyze_wav_file(file_path)
-
     # osc
     if conf["use-osc"]:
-        send_osc(file_path)
+        send_osc(trimed_file_path)
         send_osc(label_class, "/label")
         send_osc(pitch, "/pitch")
 
-    return jsonify({"data": file_path, "class": label, "pitch": pitch})
+    return jsonify({"data": trimed_file_path, "class": label, "pitch": pitch})
 
 
 @app.route('/location', methods=['POST'])
@@ -117,19 +119,18 @@ def analyze_wav_file(file_path):
     Detect pitch and classify sounds: based on labels used in DCASE2018 Challenge: 
     IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
     """
-    wave = sound_processor.read_audio(
+    wave, trimed_file_path = sound_processor.read_audio(
         cconfig.conf, file_path, trim_long_data=True)
     pitch = sound_processor.detect_pitch(cconfig.conf, wave)
     preds = model.predict(sound_processor.audio_sample_to_X(
         cconfig.conf, wave))
     for pred in preds:
         result = np.argmax(pred)
-
     label = cconfig.conf.labels[result]
     label_class = cconfig.conf.label_classes[label]
     print(f"Result: {label} / Class: '{label_class}' / Proba: {pred[result]}")
     print(f"Pitch: {pitch}")
-    return (cconfig.conf.labels[result], label_class, pitch)
+    return (cconfig.conf.labels[result], label_class, pitch, trimed_file_path)
 
 
 if __name__ == "__main__":

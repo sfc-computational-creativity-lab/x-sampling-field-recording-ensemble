@@ -105,10 +105,14 @@ def load_npy(conf, filename):
 
 # Audio Utilities
 def read_audio(conf, pathname, trim_long_data):
-    y, sr = librosa.load(pathname, sr=conf.sampling_rate)
+    y, _ = librosa.load(pathname, sr=conf.sampling_rate)
+
     # trim silence
     if 0 < len(y):  # workaround: 0 length causes error
-        y, _ = librosa.effects.trim(y)  # trim, top_db=default(60)
+        y, _ = librosa.effects.trim(y, top_db=20)  # trim, top_db=default(60)
+        pathname = f"{pathname[:-4]}_trimmed.wav"
+        librosa.output.write_wav(pathname, y, conf.sampling_rate)
+
     # make it unified length to conf.samples
     if len(y) > conf.samples:  # long enough
         if trim_long_data:
@@ -118,7 +122,7 @@ def read_audio(conf, pathname, trim_long_data):
         offset = padding // 2
         y = np.pad(y, (offset, conf.samples - len(y) - offset), 'constant')
 
-    return y
+    return y, pathname
 
 
 def audio_to_melspectrogram(conf, audio):
@@ -156,9 +160,22 @@ def read_as_melspectrogram(conf, pathname, trim_long_data, debug_display=False):
 
 
 def detect_pitch(conf, wave):
+    """
+    Detect Pitch of sound and returns freqency
+    """
     y_stft = np.abs(librosa.stft(wave, n_fft=conf.n_fft))
     playfreq = conf.freq_list[np.argmax(np.median(y_stft, axis=1))]
     return playfreq
+
+
+def trim_sound_wav(conf, wave, fname):
+    """
+    Cut out silence from sound and save shorten sound
+    """
+    y_short, _ = librosa.effects.trim(wave, top_db=20)
+    fname_s = f"{fname[:-4]}_short.wav"
+    librosa.output.write_wav(fname_s, y_short, conf.sampling_rate)
+    return fname_s
 
 
 # Dataset Utilities
