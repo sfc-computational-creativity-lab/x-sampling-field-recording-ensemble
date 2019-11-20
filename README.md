@@ -5,9 +5,14 @@
 
 Field recording ensemble in real time operation.
 
+## System Overview
+
+![system scrennshot](https://i.gyazo.com/3827d355332bf4a02647dd9e35ec1bd8.jpg)
 ![system scrennshot](https://i.gyazo.com/461f87e2b700294b805cfc2c253317c2.gif)
 
-## web recorder
+## Web Recorder
+
+fork from <https://github.com/atsukoba/AudioSampleRecorder>
 
 ### packages/dependencies
 
