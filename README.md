@@ -1,4 +1,4 @@
-# x-sampling-field-recording-ensemble
+# x-sampling-field-recording-ensemble: SFC Open Research Forum 2019 Exhibition
 
 ![badge](https://img.shields.io/badge/lab-cclab-red.svg)
 ![badge](https://img.shields.io/badge/year-2019s-green.svg)
