@@ -1,11 +1,11 @@
 # x-sampling-field-recording-ensemble
 
----
-
 ![badge](https://img.shields.io/badge/lab-cclab-red.svg)
 ![badge](https://img.shields.io/badge/year-2019s-green.svg)
 
 Field recording ensemble in real time operation.
+
+![system scrennshot](https://i.gyazo.com/461f87e2b700294b805cfc2c253317c2.gif)
 
 ## web recorder
 
