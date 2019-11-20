@@ -5,5 +5,5 @@
     "talking": false,
     "workers": 2,
     "use-osc": true,
-    "osc-port": 7777
+    "osc-port": 10500
 }

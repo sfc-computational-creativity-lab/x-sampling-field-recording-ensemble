@@ -9,11 +9,11 @@ pip3 install -r requirements.txt
 
 tmux kill-server
 
-echo "copying recorder.js plugin"
-cp Recorderjs/dist/recorder.js service/static/js/
+# echo "copying recorder.js plugin"
+# cp Recorderjs/dist/recorder.js service/static/js/
 
-echo "transpile typescript files"
-tsc
+# echo "transpile typescript files"
+# tsc
 
 if !(type "jq" > /dev/null 2>&1); then
   echo "install jq..."
@@ -55,4 +55,4 @@ url=`eval "curl localhost:4040/api/tunnels  | jq '.tunnels[0].public_url'"`
 echo "URL is ${url}"
 python3 -c "import qr; qr.generate(${url})"
 
-tmux a -t ngrok
+tmux a -t server
