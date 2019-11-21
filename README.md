@@ -1,13 +1,18 @@
-# x-sampling-field-recording-ensemble
+# x-sampling-field-recording-ensemble: SFC Open Research Forum 2019 Exhibition
 
 ![badge](https://img.shields.io/badge/lab-cclab-red.svg)
 ![badge](https://img.shields.io/badge/year-2019s-green.svg)
 
 Field recording ensemble in real time operation.
 
+## System Overview
+
+![system scrennshot](https://i.gyazo.com/3827d355332bf4a02647dd9e35ec1bd8.jpg)
 ![system scrennshot](https://i.gyazo.com/461f87e2b700294b805cfc2c253317c2.gif)
 
-## web recorder
+## Web Recorder
+
+fork from <https://github.com/atsukoba/AudioSampleRecorder>
 
 ### packages/dependencies
 
@@ -37,22 +42,35 @@ cd x-sampling-field-recording-ensemble/webrecorder
 bash run.sh
 ```
 
-when do not use tmux sessions, build a server, make a tunnel and generate qr code manually.
+#### manual running
+
+1. create a WSGI app
 
 ```shell
 cd x-sampling-field-recording-ensemble/webrecorder
 gunicorn service.app:app -b :YOUR_PORT_NUMBER
 ```
 
+1. when do not use gunicorn, build local server by `run.py` (dev mode)
+
+```shell
+cd x-sampling-field-recording-ensemble/webrecorder
+python run.py
+```
+
+2. then make www tunnel and generate qr code manually.
+
 ```shell
 ngrok http http://127.0.0.1:YOUR_PORT_NUMBER
 ```
 
 ```shell
-python -c "import qr; qr.generate(NGROK_DISTRIBUTED_URL)"
+python -c "import qr; qr.generate('NGROK_DISTRIBUTED_URL')"
 ```
 
-share and access generated QR code !
+3. share and access generated QR code !
+
+#### stop server
 
 when stopping daemon gunicorn process, for example exec below (8888 is hearing port num)
 
@@ -60,18 +78,26 @@ when stopping daemon gunicorn process, for example exec below (8888 is hearing p
 kill `ps ax | grep gunicorn | grep 8888 | awk '{split($0,a," "); print a[1]}' | head -n 1`
 ```
 
-### sounds
+or `kill -9 GUNICORN_PID`
+
+### generated sounds
 
 `.wav` files will be saved in `/sounds/`
 
 ```shell
 ── sounds
    ├── 1115003250.wav
+   ├── 1115003250_trimmed.wav
    ├── 1115003252.wav
+   ├── 1115003252_trimmed.wav
    ├── 1115003300.wav
+   ├── 1115003300_trimmed.wav
    ├── 1115003301.wav
+   ├── 1115003301_trimmed.wav
    ├── 1115003306.wav
+   ├── 1115003306_trimmed.wav
    ├── 1115003307.wav
+   ├── 1115003307_trimmed.wav
 ```
 
 sound file path will be sent as osc message (to address `/`)
