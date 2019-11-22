@@ -165,6 +165,9 @@ def detect_pitch(conf, wave):
     """
     y_stft = np.abs(librosa.stft(wave, n_fft=conf.n_fft))
     playfreq = conf.freq_list[np.argmax(np.median(y_stft, axis=1))]
+
+    if playfreq == 0:
+        playfreq = 440
     return playfreq
 
 
