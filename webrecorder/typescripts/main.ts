@@ -101,17 +101,26 @@ window.onload = function init() {
     //@ts-ignore
     window.AudioContext = window.AudioContext || window.webkitAudioContext
     //@ts-ignore
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
+    var mediaDevicesInterface = navigator.mediaDevices || ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia))
+    console.dir(mediaDevicesInterface)
+    if (!navigator.mediaDevices) {
+      __log("getUserMedia() not supported.")
+      return
+    }
     window.URL = window.URL || window.webkitURL
 
-    __log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'))
   } catch (e) {
-    alert('No web audio support in this browser!')
+    alert('No web audio support in this browser!:' + e)
   }
 
-  navigator.getUserMedia({ audio: true }, startUserMedia, (e) => {
-    __log('No live audio input: ' + e)
-  })
+  mediaDevicesInterface.getUserMedia({ audio: true })
+  .then(
+    startUserMedia
+  ).catch(
+    function(e: any) {
+      __log('No live audio input: ' + e)
+    }
+  )
 
   navigator.geolocation.getCurrentPosition(
     position => {
