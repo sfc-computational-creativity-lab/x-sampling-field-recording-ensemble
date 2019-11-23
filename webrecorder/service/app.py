@@ -121,7 +121,7 @@ def analyze_wav_file(file_path):
     IEEE AASP Challenge on Detection and Classification of Acoustic Scenes and Events
     """
     wave, trimed_file_path = sound_processor.read_audio(
-        cconfig.conf, file_path, trim_long_data=True)
+        cconfig.conf, file_path, trim_long_data=False)
     pitch = sound_processor.detect_pitch(cconfig.conf, wave)
     preds = model.predict(sound_processor.audio_sample_to_X(
         cconfig.conf, wave))
