@@ -59,7 +59,7 @@ def upload():
         send_osc(label_class, "/label")
         send_osc(pitch, "/pitch")
 
-    return jsonify({"data": trimed_file_path, "class": label, "pitch": pitch})
+    return jsonify({"data": trimed_file_path, "class": label, "label": label_class , "pitch": pitch})
 
 
 @app.route('/meta', methods=['POST'])
@@ -123,8 +123,8 @@ def analyze_wav_file(file_path):
     wave, trimed_file_path = sound_processor.read_audio(
         cconfig.conf, file_path, trim_long_data=False)
     pitch = sound_processor.detect_pitch(cconfig.conf, wave)
-    preds = model.predict(sound_processor.audio_sample_to_X(
-        cconfig.conf, wave))
+    preds = model.predict(
+        sound_processor.audio_sample_to_X(cconfig.conf, wave))
     for pred in preds:
         result = np.argmax(pred)
     label = cconfig.conf.labels[result]

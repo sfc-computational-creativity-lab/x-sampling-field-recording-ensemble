@@ -106,6 +106,7 @@ const createDownloadLink = () => {
         }).done((data) => {
             __log(`File saved: ${data.data}`);
             __log(`Sound classified: ${data.class}`);
+            __log(`Assigned to... ${data.label}`);
             __log(`Pitch detected: ${data.pitch}Hz`);
             recorder.clear();
         });
@@ -124,7 +125,7 @@ const sendMeta = (duration) => {
         }),
         success: msg => {
             if (msg) {
-                __log(`Meta info sent!\nLocation: ${String(locationData.latitude)} / ${String(locationData.longitude)}\nDuration:${duration}`);
+                __log(`Meta info sent!\nLocation: ${String(locationData.latitude)} / ${String(locationData.longitude)}\nDuration:${duration}sec`);
             }
             else {
                 __log(`Failed to meta info sending: ${msg}`);
