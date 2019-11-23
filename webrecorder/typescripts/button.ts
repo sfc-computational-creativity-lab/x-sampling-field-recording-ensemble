@@ -7,7 +7,8 @@ class Button {
   private radius: number
   private isRecording: boolean
   private rectCircleRatio: number
-  private progress: number // 0 ~ 300 value (about 5s)
+  private maxDuration: number
+  private progress: number // 0 ~ FrameRate x MaxDuration value
 
   constructor(w: number, h: number, size: number) {
     this.w = w
@@ -17,6 +18,7 @@ class Button {
     this.radius = size
     this.isRecording = false
     this.rectCircleRatio = size / 2
+    this.maxDuration = 10 // 10s
     this.progress = 0
   }
 
@@ -33,13 +35,13 @@ class Button {
     if (this.isRecording) {
       startRecording()
     } else {
+      stopRecording(this.progress / 60)
       this.progress = 0
-      stopRecording()
     }
   }
 
   draw() {
-    if (this.progress == 300) {
+    if (this.progress == 60 * this.maxDuration) {
       this.progress = 0
       this.switchRecording()
     }
@@ -55,7 +57,7 @@ class Button {
         this.rectCircleRatio += 5;
       }
     }
-    drawCircleUI(this.progress * 2 * PI / 300)
+    drawCircleUI(this.progress * 2 * PI / (60 * this.maxDuration))
     noStroke();
     fill(mainColor);
     rect(
@@ -67,7 +69,8 @@ class Button {
     // text
     fill(white)
     textAlign(CENTER, CENTER);
-    textSize(16);
+    textSize(18);
+    textStyle(BOLD);
     if (this.isRecording) {
       text('STOP',
         this.centerX,

@@ -8,6 +8,7 @@ class Button {
         this.radius = size;
         this.isRecording = false;
         this.rectCircleRatio = size / 2;
+        this.maxDuration = 10;
         this.progress = 0;
     }
     isTouched(x, y) {
@@ -23,12 +24,12 @@ class Button {
             startRecording();
         }
         else {
+            stopRecording(this.progress / 60);
             this.progress = 0;
-            stopRecording();
         }
     }
     draw() {
-        if (this.progress == 300) {
+        if (this.progress == 60 * this.maxDuration) {
             this.progress = 0;
             this.switchRecording();
         }
@@ -45,13 +46,14 @@ class Button {
                 this.rectCircleRatio += 5;
             }
         }
-        drawCircleUI(this.progress * 2 * PI / 300);
+        drawCircleUI(this.progress * 2 * PI / (60 * this.maxDuration));
         noStroke();
         fill(mainColor);
         rect(this.centerX - this.radius / 2, this.centerY - this.radius / 2, this.radius, this.radius, this.rectCircleRatio);
         fill(white);
         textAlign(CENTER, CENTER);
-        textSize(16);
+        textSize(18);
+        textStyle(BOLD);
         if (this.isRecording) {
             text('STOP', this.centerX, this.centerY);
         }
@@ -79,11 +81,11 @@ const startRecording = () => {
     recorder && recorder.record();
     __log('Recording...');
 };
-const stopRecording = () => {
+const stopRecording = (duration) => {
     recorder && recorder.stop();
     __log('Stopped recording.');
     createDownloadLink();
-    sendLocation();
+    sendMeta(duration);
 };
 const createDownloadLink = () => {
     __log("Sending Data...");
@@ -109,24 +111,25 @@ const createDownloadLink = () => {
         });
     });
 };
-const sendLocation = () => {
+const sendMeta = (duration) => {
     $.ajax({
         type: "POST",
-        url: "/location",
+        url: "/meta",
         dataType: "json",
         contentType: "application/json",
-        success: msg => {
-            if (msg) {
-                __log(`Location sent!: ${String(locationData.latitude)} / ${String(locationData.longitude)}`);
-            }
-            else {
-                __log(`Failed to Location sending: ${msg}`);
-            }
-        },
         data: JSON.stringify({
             "latitude": locationData.latitude,
-            "longitude": locationData.longitude
-        })
+            "longitude": locationData.longitude,
+            "duration": duration
+        }),
+        success: msg => {
+            if (msg) {
+                __log(`Meta info sent!\nLocation: ${String(locationData.latitude)} / ${String(locationData.longitude)}\nDuration:${duration}`);
+            }
+            else {
+                __log(`Failed to meta info sending: ${msg}`);
+            }
+        }
     });
 };
 var locationData = {

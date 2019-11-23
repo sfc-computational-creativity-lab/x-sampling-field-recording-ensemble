@@ -31,12 +31,12 @@ const startRecording = () => {
 // let startButton: Element = document.querySelector("#startButton") || document.createElement("div")
 // startButton.addEventListener('click', startRecording)
 
-const stopRecording = () => {
+const stopRecording = (duration: number) => {
   recorder && recorder.stop()
   __log('Stopped recording.')
   // create WAV download link using audio data blob
   createDownloadLink()
-  sendLocation()
+  sendMeta(duration)
 }
 // let stopButton: Element = document.querySelector("#stopButton") || document.createElement("div")
 // stopButton.addEventListener('click', stopRecording)
@@ -51,13 +51,15 @@ const createDownloadLink = () => {
     dlLink.download = "sound.wav"
     let fd = new FormData()
     fd.append('data', blob)
-    $.ajax({
-      type: 'POST',
-      url: '/',
-      data: fd,
-      processData: false,
-      contentType: false
-    }).done((data) => {
+    $.ajax(
+      {
+        type: 'POST',
+        url: '/',
+        data: fd,
+        processData: false,
+        contentType: false
+      }
+    ).done((data) => {
       __log(`File saved: ${data.data}`)
       __log(`Sound classified: ${data.class}`)
       __log(`Pitch detected: ${data.pitch}Hz`)
@@ -67,26 +69,27 @@ const createDownloadLink = () => {
   })
 }
 
-const sendLocation = () => {
+const sendMeta = (duration: Number) => {
   $.ajax(
     {
       type: "POST",
-      url: "/location",
+      url: "/meta",
       dataType: "json",
       contentType: "application/json",
-      success: msg => {
-        if (msg) {
-          __log(`Location sent!: ${String(locationData.latitude)} / ${String(locationData.longitude)}`)
-        } else {
-          __log(`Failed to Location sending: ${msg}`)
-        }
-      },
       data: JSON.stringify(
         {
           "latitude": locationData.latitude,
-          "longitude": locationData.longitude
+          "longitude": locationData.longitude,
+          "duration": duration
         }
-      )
+      ),
+      success: msg => {
+        if (msg) {
+          __log(`Meta info sent!\nLocation: ${String(locationData.latitude)} / ${String(locationData.longitude)}\nDuration:${duration}sec`)
+        } else {
+          __log(`Failed to meta info sending: ${msg}`)
+        }
+      }
     }
   )
 }
@@ -114,13 +117,13 @@ window.onload = function init() {
   }
 
   mediaDevicesInterface.getUserMedia({ audio: true })
-  .then(
-    startUserMedia
-  ).catch(
-    function(e: any) {
-      __log('No live audio input: ' + e)
-    }
-  )
+    .then(
+      startUserMedia
+    ).catch(
+      function (e: any) {
+        __log('No live audio input: ' + e)
+      }
+    )
 
   navigator.geolocation.getCurrentPosition(
     position => {

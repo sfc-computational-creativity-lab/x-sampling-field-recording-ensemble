@@ -62,16 +62,17 @@ def upload():
     return jsonify({"data": trimed_file_path, "class": label, "pitch": pitch})
 
 
-@app.route('/location', methods=['POST'])
+@app.route('/meta', methods=['POST'])
 def location_update():
     data = request.json
     if data is not None:
-        print(f"location received: {data}")
+        print(f"meta info received: {data}")
         # osc
         if conf["use-osc"]:
             send_osc(f"{data['latitude']}/{data['longitude']}",
                      route="/location")
-        return jsonify({"data": f"received: {data['latitude']} {data['longitude']}"})
+            send_osc(data['duration'], route="/duration")
+        return jsonify({"data": f"Meta info Received\nLocation: {data['latitude']} {data['longitude']}\nDuration: {data['duration']}"})
 
 
 def play_wav_file(file_name):
