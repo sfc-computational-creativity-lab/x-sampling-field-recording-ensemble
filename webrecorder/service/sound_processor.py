@@ -109,7 +109,7 @@ def read_audio(conf, pathname, trim_long_data):
 
     # trim silence
     if 0 < len(y):  # workaround: 0 length causes error
-        y, _ = librosa.effects.trim(y, top_db=20)  # trim, top_db=default(60)
+        y, _ = librosa.effects.trim(y, top_db=15)  # trim, top_db=default(60)
         pathname = f"{pathname[:-4]}_trimmed.wav"
         librosa.output.write_wav(pathname, y, conf.sampling_rate)
 
