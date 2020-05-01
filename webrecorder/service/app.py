@@ -59,7 +59,7 @@ def upload():
         send_osc(label_class, "/label")
         send_osc(pitch, "/pitch")
 
-    return jsonify({"data": trimed_file_path, "class": label, "label": label_class , "pitch": pitch})
+    return jsonify({"data": trimed_file_path, "class": label, "label": label_class, "pitch": pitch})
 
 
 @app.route('/meta', methods=['POST'])
