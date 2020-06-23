@@ -48,7 +48,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 55.0, 247.256097137928009, 364.776119402985103, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "MIDI notes and Velocities"
 				}
 
@@ -309,14 +308,14 @@
 					"presentation_rect" : [ 101.219391465187073, 6.346292793750763, 128.0, 36.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_mmin" : -70.0,
 							"parameter_longname" : "live.gain~[1]",
 							"parameter_initial_enable" : 1,
 							"parameter_mmax" : 6.0,
 							"parameter_initial" : [ 0.0 ],
 							"parameter_shortname" : "live.gain~",
 							"parameter_type" : 0,
-							"parameter_unitstyle" : 4
+							"parameter_unitstyle" : 4,
+							"parameter_mmin" : -70.0
 						}
 
 					}
@@ -954,7 +953,7 @@
 ,
 		"dependency_cache" : [ 			{
 				"name" : "sampler.maxpat",
-				"bootpath" : "~/Documents/cclab/x-sampling-field-recording-ensemble/patcher",
+				"bootpath" : "~/Documents/x-sampling-field-recording-ensemble/patcher",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
